@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "AI-assisted workflow for customer requests, developer execution and QC verification",
   "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "directories": {
     "doc": "docs",
     "example": "examples"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

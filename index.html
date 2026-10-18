@@ -4,181 +4,618 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Developer Assistant | Data Updates</title>
+  <title>AI Customer Support Assistant</title>
   <style>
+    :root {
+      color-scheme: light;
+      --navy: #1d2742;
+      --text: #344054;
+      --muted: #667085;
+      --purple: #6941c6;
+      --purple-dark: #5631ad;
+      --purple-soft: #f5f2fc;
+      --border: #e4e7ec;
+      --surface: #ffffff;
+      --page: #f4f6f9;
+      --green-bg: #ecfdf3;
+      --green-text: #027a48;
+      --amber-bg: #fffaeb;
+      --amber-text: #b54708;
+    }
+
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      background: var(--page);
+      color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f4f6f8;
-      color: #202938;
       line-height: 1.5;
     }
 
-    header {
-      background: #172b4d;
-      color: white;
-      padding: 24px;
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
     }
 
-    header h1 { margin: 0 0 6px; font-size: 24px; }
-    header p { margin: 0; color: #d5deeb; }
+    .topbar-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 28px;
+    }
+
+    .brand {
+      margin: 0;
+      color: var(--navy);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      margin: 1px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
     main {
-      max-width: 900px;
-      margin: 28px auto;
-      padding: 0 18px 40px;
+      width: min(100% - 48px, 1160px);
+      margin: 30px auto 48px;
     }
 
-    .card {
-      background: white;
-      border: 1px solid #e1e5eb;
-      border-radius: 12px;
-      padding: 22px;
-      margin-bottom: 18px;
+    .page-intro { margin-bottom: 20px; }
+
+    .page-intro h1 {
+      margin: 0 0 7px;
+      color: var(--navy);
+      font-size: clamp(25px, 3vw, 30px);
+      line-height: 1.2;
+      letter-spacing: -0.035em;
     }
 
-    h2 { margin-top: 0; font-size: 19px; }
-    label { display: block; font-weight: 600; margin-bottom: 8px; }
-
-    textarea {
-      width: 100%;
-      min-height: 145px;
-      padding: 12px;
-      border: 1px solid #b8c2cf;
-      border-radius: 8px;
-      font: inherit;
-      resize: vertical;
-    }
-
-    button {
-      background: #175cd3;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 11px 17px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-
-    button:hover { background: #1249a8; }
-
-    .secondary {
-      background: #e9eef5;
-      color: #172b4d;
-      margin-left: 8px;
-    }
-
-    .secondary:hover { background: #dce4ef; }
-
-    .notice {
-      background: #fff7e6;
-      border: 1px solid #f0d28a;
-      padding: 12px;
-      border-radius: 8px;
+    .page-intro p {
+      margin: 0;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    .result {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      font-family: inherit;
-      margin: 0;
+    .card {
+      margin-bottom: 14px;
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgb(16 24 40 / 4%);
     }
 
-    .muted { color: #667085; font-size: 14px; }
+    h2 {
+      margin: 0 0 14px;
+      color: var(--navy);
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    h3 {
+      margin: 20px 0 10px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 142px;
+      padding: 12px 14px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      background: #fcfcfd;
+      color: var(--text);
+      font: inherit;
+      resize: vertical;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    textarea::placeholder { color: #9697a8; }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgb(112 68 197 / 14%);
+    }
+
+    .notice {
+      margin-bottom: 14px;
+      padding: 11px 14px;
+      border: 1px solid #e5dcf8;
+      border-radius: 8px;
+      background: var(--purple-soft);
+      color: #4d3b72;
+      font-size: 13px;
+    }
+
+    .blocked-notice {
+      border-color: #fedf89;
+      background: var(--amber-bg);
+      color: #7a2e0e;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 9px;
+      margin-top: 13px;
+    }
+
+    button {
+      min-height: 40px;
+      margin: 0;
+      padding: 8px 15px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgb(112 68 197 / 22%);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .primary {
+      background: var(--purple);
+      color: white;
+    }
+
+    .primary:hover:not(:disabled) { background: var(--purple-dark); }
+
+    .secondary {
+      border-color: var(--border);
+      background: var(--surface);
+      color: var(--navy);
+    }
+
+    .secondary:hover:not(:disabled) {
+      border-color: #cfc1e8;
+      background: #faf8fe;
+    }
+
+    .muted {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .result {
+      overflow-wrap: anywhere;
+      margin: 0;
+      color: var(--text);
+      font-family: inherit;
+      white-space: pre-wrap;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .results-grid > .notice,
+    .results-grid > .results-heading { grid-column: 1 / -1; margin: 0; }
+    .results-grid > .card { min-width: 0; margin: 0; }
+    .results-grid > .wide { grid-column: 1 / -1; }
+    .results-grid > .half { grid-column: span 6; }
+
+    .results-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 4px 0 0;
+    }
+
+    .results-heading h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .export-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .export-actions .muted { margin: 0; }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px 18px;
+      margin-bottom: 18px;
+    }
+
+    .overview-item { min-width: 0; }
+
+    .overview-item dt {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+    }
+
+    .overview-item dd {
+      margin: 0;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 550;
+      overflow-wrap: anywhere;
+    }
+
+    .overview-item .status-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--green-bg);
+      color: var(--green-text);
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .overview-item .status-badge.needs-review {
+      background: var(--amber-bg);
+      color: var(--amber-text);
+    }
+
+    .overview-item .status-badge.unsupported {
+      background: #f2f4f7;
+      color: #475467;
+    }
+
+    .outcome {
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .outcome-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+    }
+
+    .section-empty {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .clarification-list,
+    .action-list,
+    .checklist-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .clarification-list li {
+      position: relative;
+      margin: 0;
+      padding: 8px 0 8px 18px;
+      border-bottom: 1px solid #f0f1f4;
+      font-size: 13px;
+    }
+
+    .clarification-list li:last-child { border-bottom: 0; }
+
+    .clarification-list li::before {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      color: var(--purple);
+      content: "?";
+      font-weight: 700;
+    }
+
+    .action-phase + .action-phase { margin-top: 16px; }
+
+    .phase-title {
+      margin: 0 0 7px;
+      color: var(--purple-dark);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+
+    .action-list { counter-reset: action; }
+
+    .action-list li {
+      position: relative;
+      margin: 0;
+      padding: 5px 0 5px 28px;
+      font-size: 13px;
+      counter-increment: action;
+    }
+
+    .action-list li::before {
+      position: absolute;
+      left: 0;
+      top: 5px;
+      color: var(--purple);
+      font-weight: 700;
+      content: counter(action) ".";
+    }
+
+    .action-phase.conditional {
+      padding: 10px 12px;
+      border-left: 2px solid #c4b5fd;
+      background: #faf9fe;
+    }
+
+    .checklist-group + .checklist-group { margin-top: 14px; }
+
+    .checklist-group h3 {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 0;
+      padding: 7px 0;
+      border-bottom: 1px solid #f0f1f4;
+      font-size: 13px;
+    }
+
+    .checklist-item:last-child { border-bottom: 0; }
+
+    .checkmark-box {
+      flex: 0 0 15px;
+      width: 15px;
+      height: 15px;
+      margin-top: 2px;
+      border: 1.5px solid #98a2b3;
+      border-radius: 3px;
+      background: #fff;
+    }
+
+    .details-summary {
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .details-card { padding-top: 17px; padding-bottom: 17px; }
+
+    .empty-state {
+      padding: 18px 12px !important;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .request-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .request-toolbar .actions { margin: 0; }
+    .request-toolbar .muted { max-width: 310px; margin: 0; text-align: right; }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    .changes-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .changes-table th {
+      padding: 11px 13px;
+      background: #f8f7fb;
+      color: var(--navy);
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .changes-table td {
+      padding: 11px 13px;
+      border-top: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    footer {
+      padding: 18px 20px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
 
     .hidden { display: none; }
 
-    footer {
-      text-align: center;
-      padding: 12px;
-      color: #667085;
-      font-size: 13px;
+    @media (max-width: 700px) {
+      .topbar-inner { padding: 13px 20px; }
+      main { width: min(100% - 28px, 600px); margin: 24px auto 36px; }
+      .card { padding: 17px; }
+      .results-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+      .results-grid > .wide,
+      .results-grid > .half { grid-column: auto; }
+      .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .results-heading,
+      .request-toolbar { align-items: flex-start; flex-direction: column; }
+      .export-actions { width: 100%; justify-content: space-between; }
+      .request-toolbar .actions { width: 100%; }
+      .request-toolbar .actions button { flex: 1 1 auto; }
+      .request-toolbar .muted { max-width: none; text-align: left; }
+      .changes-table { min-width: 720px; }
+    }
+
+    @media (max-width: 420px) {
+      main { width: calc(100% - 24px); }
+      .overview-grid { grid-template-columns: 1fr 1fr; }
+      .actions button { flex: 1 1 100%; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Developer Assistant</h1>
-    <p>Prepare data-update plans and QC verification checklists.</p>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand">AI Customer Support Assistant</p>
+      <p class="brand-subtitle">Prepare customer requests for developer review and QC</p>
+    </div>
   </header>
 
   <main>
+    <div class="page-intro">
+      <h1>Support Request Assistant</h1>
+      <p>Turn a customer email into a clear, reviewable work package.</p>
+    </div>
+
     <section class="card">
-      <h2>1. Customer request</h2>
-      <label for="request">Paste a synthetic or authorized request</label>
-      <textarea id="request" placeholder="Example: Please update the status of item ITEM-1001 to Active."></textarea>
-
-      <button id="generate">Generate work package</button>
-      <button id="sample" class="secondary">Load sample</button>
-      <button id="export" class="secondary" disabled>Export work package</button>
-      <p id="exportStatus" class="muted">Generate a work package before exporting.</p>
-
-      <p class="muted">
-        AI-powered prototype using Gemini. It does not access Gmail, Jira,
-        or your company's systems. All outputs are drafts requiring human review.
-        </p>
-    </section>
-
-    <section id="results" class="hidden">
+      <h2>Customer request</h2>
       <div class="notice">
         <strong>Human review required.</strong>
-        The generated content is a draft. No data has been changed.
+        AI-prepared draft only. No company systems are accessed.
       </div>
-      <div id="blockedNotice" class="notice hidden" style="margin-top: 12px;">
-        <strong>Work package blocked pending clarification.</strong>
-        Do not execute any change until the identifier is clarified and required authorization is confirmed.
+      <label for="request">Customer Email / Request</label>
+      <textarea id="request" placeholder="Paste the complete customer email here, including its subject and requested item changes."></textarea>
+      <p class="muted">Paste the customer email or request you received from the team mailbox.</p>
+
+      <div class="request-toolbar">
+        <div class="actions">
+          <button id="sample" class="secondary">Try Example Request</button>
+          <button id="generate" class="primary">Analyze Request</button>
+        </div>
+        <p class="muted">No changes execute automatically.</p>
+      </div>
+    </section>
+
+    <section id="results" class="results-grid hidden">
+      <div class="results-heading">
+        <h2>Work package</h2>
+        <div class="export-actions">
+          <p id="exportStatus" class="muted">Export the displayed draft for review.</p>
+          <button id="export" class="secondary" disabled>Export Work Package</button>
+        </div>
+      </div>
+      <div id="blockedNotice" class="notice blocked-notice hidden">
+        <strong>Review required before execution.</strong>
+        <p id="blockReason" class="result"></p>
       </div>
 
-      <section class="card">
-        <h2>2. Request summary</h2>
-        <pre id="summary" class="result"></pre>
+      <section class="card wide">
+        <h2>Request overview</h2>
+        <dl class="overview-grid">
+          <div class="overview-item">
+            <dt>Request type</dt>
+            <dd id="requestType"></dd>
+          </div>
+          <div class="overview-item">
+            <dt>Review status</dt>
+            <dd><span id="reviewStatus" class="status-badge"></span></dd>
+          </div>
+          <div class="overview-item">
+            <dt>Authorization</dt>
+            <dd id="authorizationStatus"></dd>
+          </div>
+          <div class="overview-item">
+            <dt>Execution</dt>
+            <dd id="executionStatus"></dd>
+          </div>
+          <div class="overview-item">
+            <dt>Target scope</dt>
+            <dd id="scopeDetails"></dd>
+          </div>
+        </dl>
+        <div class="outcome">
+          <span class="outcome-label">Requested outcome</span>
+          <pre id="summary" class="result"></pre>
+        </div>
       </section>
 
-
-<section class="card">
-  <h2>3. Extracted information</h2>
-  <pre id="extracted" class="result"></pre>
-
-  <h3>Requested changes</h3>
-  <div style="overflow-x: auto;">
-    <table style="width:100%; border-collapse:collapse; text-align:left;">
-      <thead>
-        <tr>
-          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Item ID</th>
-          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Identifier status</th>
-          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Field</th>
-          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Requested value</th>
-        </tr>
-      </thead>
-      <tbody id="changeRows">
-        <tr>
-          <td colspan="4" style="padding:10px;">No changes extracted yet.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-
-      <section class="card">
-        <h2>4. Missing information and limitations</h2>
-        <pre id="missing" class="result"></pre>
+      <section class="card wide">
+        <h2>Requested changes</h2>
+        <div class="table-scroll">
+          <table class="changes-table">
+            <thead>
+              <tr>
+                <th>Target / Item ID</th>
+                <th>Identifier status</th>
+                <th>Field</th>
+                <th>Requested value</th>
+                <th>Conditions</th>
+              </tr>
+            </thead>
+            <tbody id="changeRows">
+              <tr>
+                <td colspan="5" class="empty-state">No changes extracted yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
-      <section class="card">
-        <h2>5. Developer work plan</h2>
-        <pre id="plan" class="result"></pre>
+      <section class="card half">
+        <h2>Clarifications Needed</h2>
+        <ul id="missing" class="clarification-list"></ul>
       </section>
 
-      <section class="card">
-        <h2>6. QC verification checklist</h2>
-        <pre id="checklist" class="result"></pre>
+      <section class="card half">
+        <h2>Suggested Developer Actions</h2>
+        <div id="plan"></div>
+      </section>
+
+      <section class="card wide">
+        <h2>QC Verification Checklist</h2>
+        <div id="checklist"></div>
+      </section>
+
+      <section class="card wide details-card">
+        <details>
+          <summary class="details-summary">Additional extracted information</summary>
+          <pre id="extracted" class="result"></pre>
+        </details>
       </section>
     </section>
   </main>
@@ -191,11 +628,40 @@
     const exportButton = document.getElementById("export");
     const exportStatus = document.getElementById("exportStatus");
     let currentCustomerRequest = "";
+    const requestTypeLabels = {
+      specific_item_update: "Specific item update",
+      criteria_based_update: "Criteria-based update",
+      bulk_update: "Bulk data update",
+      report_request: "Report request",
+      issue_capa: "Issue / CAPA",
+      issue_capa_request: "Issue / CAPA",
+      incomplete_request: "Needs clarification",
+      unclear: "Needs clarification",
+      unsupported: "Unsupported request"
+    };
+    const reviewStatusLabels = {
+      needs_clarification: "Needs clarification",
+      ready_for_human_review: "Ready for review",
+      unsupported: "Unsupported request"
+    };
+    const authorizationLabels = {
+      stated: "Reported in request; not independently verified",
+      not_stated: "Not stated",
+      needs_confirmation: "Needs confirmation",
+      not_applicable: "Not applicable"
+    };
+    const scopeLabels = {
+      specific_items: "Specific items",
+      criteria: "Criteria-based",
+      explicit_list: "Explicit item list",
+      not_applicable: "Not applicable",
+      unclear: "Unclear"
+    };
 
     function showChangeMessage(message) {
       const row = document.createElement("tr");
       const cell = document.createElement("td");
-      cell.colSpan = 4;
+      cell.colSpan = 5;
       cell.style.padding = "10px";
       cell.textContent = message;
       row.appendChild(cell);
@@ -206,6 +672,189 @@
       return value.replace(/\|/g, "\\|").replace(/\r?\n/g, "<br>");
     }
 
+    function formatExtractedInformation(extracted = {}) {
+      const sections = [
+        ["Explicitly provided", extracted.explicit],
+        ["Inferred", extracted.inferred],
+        ["Unresolved", extracted.unresolved]
+      ].filter(([, values]) => Array.isArray(values) && values.length > 0)
+        .map(([title, values]) =>
+          `${title}:\n${values.map((value) => `- ${value}`).join("\n")}`
+        );
+
+      const entities = Array.isArray(extracted.entities)
+        ? extracted.entities.map((entity) =>
+            `- ${entity.name}: ${entity.value} (${{
+              explicit: "Provided",
+              inferred: "Inferred",
+              unresolved: "Unresolved"
+            }[entity.sourceStatus] || "Source not specified"})${entity.note ? ` — ${entity.note}` : ""}`
+          )
+        : [];
+      const attachments = Array.isArray(extracted.attachments)
+        ? extracted.attachments.map((attachment) =>
+            `- ${attachment.name}: ${attachment.availability === "provided_in_text" ? "content included in request" : "content not available in pasted request"}${attachment.note ? ` — ${attachment.note}` : ""}`
+          )
+        : [];
+      const formattedSections = [...sections];
+
+      if (entities.length > 0) {
+        formattedSections.push(`Entities:\n${entities.join("\n")}`);
+      }
+      if (attachments.length > 0) {
+        formattedSections.push(`Referenced attachments:\n${attachments.join("\n")}`);
+      }
+      return formattedSections.filter(Boolean).join("\n\n");
+    }
+
+    function formatClarifications(data) {
+      const questions = [
+        ...(Array.isArray(data.clarifications) ? data.clarifications : []),
+        ...(Array.isArray(data.extracted?.unresolved) ? data.extracted.unresolved : [])
+      ];
+      const seenQuestions = new Set();
+      const uniqueQuestions = questions.filter((question) => {
+        if (typeof question !== "string" || !question.trim()) {
+          return false;
+        }
+        const normalized = question.trim().toLowerCase()
+          .replace(/[.!?]+$/, "").replace(/\s+/g, " ");
+        if (seenQuestions.has(normalized)) {
+          return false;
+        }
+        seenQuestions.add(normalized);
+        return true;
+      });
+      return uniqueQuestions.join("\n");
+    }
+
+    function setEmptyState(container, message) {
+      const empty = document.createElement(
+        container instanceof HTMLUListElement ? "li" : "p"
+      );
+      empty.className = "section-empty";
+      empty.textContent = message;
+      container.replaceChildren(empty);
+    }
+
+    function renderClarifications(text) {
+      const list = document.getElementById("missing");
+      const questions = text.split(/\r?\n/).map((question) => question.trim()).filter(Boolean);
+      list.dataset.exportText = questions.join("\n");
+      if (questions.length === 0) {
+        setEmptyState(list, "No clarifications currently identified.");
+        return;
+      }
+
+      list.replaceChildren(...questions.map((question) => {
+        const item = document.createElement("li");
+        item.textContent = question.replace(/^[-*]\s*/, "");
+        return item;
+      }));
+    }
+
+    function renderPlan(text) {
+      const container = document.getElementById("plan");
+      container.dataset.exportText = text;
+      const phases = [];
+      let currentPhase = { title: "Suggested actions", items: [], conditional: false };
+
+      const savePhase = () => {
+        if (currentPhase.items.length > 0) phases.push(currentPhase);
+      };
+
+      for (const rawLine of text.split(/\r?\n/)) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const normalizedHeading = line.replace(/^#+\s*/, "").replace(/:$/, "");
+        if (/^(IMMEDIATE\b|AFTER SCOPE AND AUTHORIZATION\b|AFTER APPROVAL\b)/i.test(normalizedHeading)) {
+          savePhase();
+          currentPhase = {
+            title: normalizedHeading,
+            items: [],
+            conditional: !/^IMMEDIATE\b/i.test(normalizedHeading)
+          };
+          continue;
+        }
+        currentPhase.items.push(line.replace(/^\d+[.)]\s*/, ""));
+      }
+      savePhase();
+
+      if (phases.length === 0) {
+        setEmptyState(container, "No developer actions provided.");
+        return;
+      }
+
+      container.replaceChildren(...phases.map((phase) => {
+        const section = document.createElement("section");
+        section.className = `action-phase${phase.conditional ? " conditional" : ""}`;
+        const heading = document.createElement("h3");
+        heading.className = "phase-title";
+        heading.textContent = phase.title;
+        const list = document.createElement("ol");
+        list.className = "action-list";
+        list.replaceChildren(...phase.items.map((text) => {
+          const item = document.createElement("li");
+          item.textContent = text;
+          return item;
+        }));
+        section.append(heading, list);
+        return section;
+      }));
+    }
+
+    function renderChecklist(text) {
+      const container = document.getElementById("checklist");
+      container.dataset.exportText = text;
+      const before = [];
+      const after = [];
+
+      for (const rawLine of text.split(/\r?\n/)) {
+        const item = rawLine.trim().replace(/^\[\s?\]\s*/, "").replace(/^[-*]\s*/, "");
+        if (!item) continue;
+        if (/after authorized execution|post[- ]execution|after execution/i.test(item)) {
+          after.push(item);
+        } else {
+          before.push(item);
+        }
+      }
+
+      if (before.length === 0 && after.length === 0) {
+        setEmptyState(container, "No QC verification checks provided.");
+        return;
+      }
+
+      const groups = [];
+      if (before.length > 0) groups.push(["Review before execution", before]);
+      if (after.length > 0) groups.push(["Verify after authorized execution", after]);
+      container.replaceChildren(...groups.map(([title, items]) => {
+        const group = document.createElement("section");
+        group.className = "checklist-group";
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+        const list = document.createElement("ul");
+        list.className = "checklist-list";
+        list.replaceChildren(...items.map((text) => {
+          const item = document.createElement("li");
+          item.className = "checklist-item";
+          const box = document.createElement("span");
+          box.className = "checkmark-box";
+          box.setAttribute("aria-hidden", "true");
+          const description = document.createElement("span");
+          description.textContent = text;
+          item.append(box, description);
+          return item;
+        }));
+        group.append(heading, list);
+        return group;
+      }));
+    }
+
+    function exportText(elementId) {
+      const element = document.getElementById(elementId);
+      return element.dataset.exportText || element.textContent;
+    }
+
     exportButton.addEventListener("click", () => {
       if (exportButton.disabled || !currentCustomerRequest) {
         return;
@@ -213,31 +862,46 @@
 
       const changeRows = Array.from(
         document.querySelectorAll("#changeRows tr")
-      ).map((row) =>
-        Array.from(row.cells, (cell) => markdownCell(cell.textContent))
-      );
+      ).map((row) => {
+        const cells = Array.from(row.cells, (cell) =>
+          markdownCell(cell.textContent)
+        );
+        return row.cells.length === 1 && row.cells[0].colSpan === 5
+          ? `| ${cells[0]} |  |  |  |  |`
+          : `| ${cells.join(" | ")} |`;
+      });
       const changesMarkdown = [
-        "| Item ID | Identifier status | Field | Requested value |",
-        "| --- | --- | --- | --- |",
-        ...changeRows.map((row) => `| ${row.join(" | ")} |`)
+        "| Target / Item ID | Identifier status | Field | Requested value | Conditions |",
+        "| --- | --- | --- | --- | --- |",
+        ...changeRows
       ].join("\n");
       const sections = [
         "# Customer Support Work Package",
         "> Draft for human review. No data update is claimed or executed by this export.",
         "## Customer request",
         currentCustomerRequest,
+        "## Request type",
+        document.getElementById("requestType").textContent,
+        "## Review status",
+        document.getElementById("reviewStatus").textContent,
+        "## Scope",
+        document.getElementById("scopeDetails").textContent,
+        "## Authorization status",
+        document.getElementById("authorizationStatus").textContent,
+        "## Execution status",
+        document.getElementById("executionStatus").textContent,
         "## Summary",
         document.getElementById("summary").textContent,
         "## Extracted information",
         document.getElementById("extracted").textContent,
         "## Requested changes",
         changesMarkdown,
-        "## Missing information and limitations",
-        document.getElementById("missing").textContent,
-        "## Developer work plan",
-        document.getElementById("plan").textContent,
-        "## QC checklist",
-        document.getElementById("checklist").textContent
+        "## Clarifications Needed",
+        exportText("missing"),
+        "## Suggested Developer Actions",
+        exportText("plan"),
+        "## QC Verification Checklist",
+        exportText("checklist")
       ];
       const file = new Blob([sections.join("\n\n")], {
         type: "text/markdown;charset=utf-8"
@@ -280,19 +944,25 @@ document.getElementById("generate").addEventListener("click", async () => {
   }
 
   generateButton.disabled = true;
-  generateButton.textContent = "Generating with AI...";
+  generateButton.textContent = "Analyzing Request...";
   exportButton.disabled = true;
   currentCustomerRequest = "";
-  exportStatus.textContent = "Generate a work package before exporting.";
+  exportStatus.textContent = "Analyze a request before exporting.";
 
   results.classList.remove("hidden");
   document.getElementById("summary").textContent = request;
   document.getElementById("extracted").textContent =
     "Gemini is analyzing the request...";
-  document.getElementById("missing").textContent = "Please wait...";
-  document.getElementById("plan").textContent = "Generating AI work package...";
-  document.getElementById("checklist").textContent = "Please wait...";
+  renderClarifications("Please wait...");
+  renderPlan("Generating AI work package...");
+  renderChecklist("Preparing QC checklist...");
   document.getElementById("blockedNotice").classList.add("hidden");
+  document.getElementById("requestType").textContent = "";
+  document.getElementById("reviewStatus").textContent = "";
+  document.getElementById("scopeDetails").textContent = "";
+  document.getElementById("authorizationStatus").textContent = "";
+  document.getElementById("executionStatus").textContent = "";
+  document.getElementById("blockReason").textContent = "";
   showChangeMessage("Gemini is extracting requested changes...");
 
   try {
@@ -318,11 +988,36 @@ document.getElementById("generate").addEventListener("click", async () => {
 
     // Gemini returns a generated work package as text.
 
+document.getElementById("requestType").textContent =
+  requestTypeLabels[data.requestType] || "Needs clarification";
+const reviewStatus = reviewStatusLabels[data.reviewStatus] ||
+  (data.blocked ? "Needs clarification" : "Ready for human review");
+const reviewBadge = document.getElementById("reviewStatus");
+reviewBadge.textContent = reviewStatus;
+reviewBadge.classList.toggle("needs-review", data.reviewStatus === "needs_clarification" || data.blocked);
+reviewBadge.classList.toggle("unsupported", data.reviewStatus === "unsupported");
+document.getElementById("scopeDetails").textContent =
+  data.scope
+    ? [
+        `Scope (${scopeLabels[data.scope.kind] || "Not specified"}): ${data.scope.description || "Not specified"}`,
+        ...(Array.isArray(data.scope.conditions) && data.scope.conditions.length
+          ? [`Target conditions: ${data.scope.conditions.join("; ")}`]
+          : []),
+        `Scope confirmation: ${data.scope.confirmationStatus === "needs_confirmation" ? "Needs confirmation" : "Not applicable"}`
+      ].join(" · ")
+    : "";
+document.getElementById("authorizationStatus").textContent =
+  authorizationLabels[data.authorizationStatus] || "Not stated";
+document.getElementById("executionStatus").textContent =
+  data.executionStatus === "not_executed" ? "Not executed" : "Not reported";
 document.getElementById("summary").textContent = data.summary;
-document.getElementById("extracted").textContent = data.extracted;
-document.getElementById("missing").textContent = data.missing;
-document.getElementById("plan").textContent = data.plan;
-document.getElementById("checklist").textContent = data.checklist;
+document.getElementById("extracted").textContent =
+  typeof data.extracted === "string"
+    ? data.extracted
+    : formatExtractedInformation(data.extracted);
+renderClarifications(formatClarifications(data));
+renderPlan(typeof data.plan === "string" ? data.plan : "");
+renderChecklist(typeof data.checklist === "string" ? data.checklist : "");
 const changeRows = document.getElementById("changeRows");
 const changes = Array.isArray(data.changes) ? data.changes : [];
 const validChanges = changes.filter(
@@ -331,21 +1026,32 @@ const validChanges = changes.filter(
     typeof change === "object" &&
     !Array.isArray(change) &&
     typeof change.itemId === "string" &&
-    ["clear", "ambiguous", "missing"].includes(change.identifierStatus) &&
+    typeof change.target === "string" &&
+    ["clear", "ambiguous", "missing", "not_applicable"].includes(change.identifierStatus) &&
     typeof change.identifierNote === "string" &&
-    (change.identifierStatus === "missing"
+    (["missing", "not_applicable"].includes(change.identifierStatus)
       ? change.itemId === ""
-      : Boolean(change.itemId)) &&
-    (change.identifierStatus === "clear" || Boolean(change.identifierNote.trim())) &&
-    ["field", "requestedValue"].every(
-      (key) => typeof change[key] === "string" && change[key].trim()
+      : change.identifierStatus === "ambiguous"
+        ? change.itemId === "" || Boolean(change.itemId)
+        : Boolean(change.itemId)) &&
+    (["clear", "not_applicable"].includes(change.identifierStatus) || Boolean(change.identifierNote.trim())) &&
+    ["field", "requestedValue", "conditions"].every(
+      (key) => typeof change[key] === "string"
     )
 );
 const identifierNeedsClarification = validChanges.some(
-  (change) => change.identifierStatus !== "clear"
+  (change) => ["ambiguous", "missing"].includes(change.identifierStatus)
 );
-const workPackageBlocked = data.blocked === true || identifierNeedsClarification;
+const workPackageBlocked =
+  data.blocked === true ||
+  identifierNeedsClarification ||
+  ["criteria_based_update", "bulk_update"].includes(data.requestType);
 document.getElementById("blockedNotice").classList.toggle("hidden", !workPackageBlocked);
+document.getElementById("blockReason").textContent =
+  data.blockReason ||
+  (workPackageBlocked
+    ? "Resolve the clarifications and confirm scope and applicable authorization before execution."
+    : "");
 
 changeRows.replaceChildren();
 
@@ -354,12 +1060,15 @@ if (validChanges.length > 0) {
     const row = document.createElement("tr");
 
     [
-      change.itemId || "Not provided",
+      change.itemId || change.target || "Not provided",
       change.identifierStatus === "clear"
         ? "Clear"
-        : `${change.identifierStatus}: ${change.identifierNote}`,
+        : change.identifierStatus === "not_applicable"
+          ? "Not applicable"
+          : `${change.identifierStatus === "missing" ? "Missing" : "Ambiguous"}: ${change.identifierNote}`,
       change.field,
-      change.requestedValue
+      change.requestedValue,
+      change.conditions
     ].forEach(value => {
       const cell = document.createElement("td");
       cell.style.padding = "10px";
@@ -373,14 +1082,16 @@ if (validChanges.length > 0) {
 }
 
 if (validChanges.length === 0) {
-  const message = Array.isArray(data.changes)
-    ? "No valid changes could be extracted. Review the extracted information and request."
-    : "The AI response did not include a valid changes list. Review the extracted information and request.";
+  const message = ["report_request", "issue_capa", "issue_capa_request", "unsupported"].includes(data.requestType)
+    ? "No item-level data changes apply to this request type. Review its routing and suggested actions."
+    : Array.isArray(data.changes)
+      ? "No valid changes could be extracted. Review the extracted information and request."
+      : "The AI response did not include a valid changes list. Review the extracted information and request.";
   showChangeMessage(message);
 } else if (validChanges.length < changes.length) {
   const row = document.createElement("tr");
   const cell = document.createElement("td");
-  cell.colSpan = 4;
+  cell.colSpan = 5;
   cell.style.padding = "10px";
   cell.textContent =
     "Some returned changes were invalid and were not displayed. Review the extracted information and request.";
@@ -392,15 +1103,13 @@ if (validChanges.length === 0) {
   } catch (error) {
     showChangeMessage("No requested changes are available because the AI request failed.");
     document.getElementById("extracted").textContent = "AI request unsuccessful.";
-    document.getElementById("missing").textContent = error.message;
-    document.getElementById("plan").textContent =
-      "No work package was generated. Check the backend terminal and try again.";
-    document.getElementById("checklist").textContent =
-      "Do not execute any change based on an unsuccessful AI request.";
+    renderClarifications(error.message);
+    renderPlan("No work package was generated. Check the backend terminal and try again.");
+    renderChecklist("Do not execute any change based on an unsuccessful AI request.");
 
   } finally {
     generateButton.disabled = false;
-    generateButton.textContent = "Generate work package";
+    generateButton.textContent = "Analyze Request";
   }
 
   results.scrollIntoView({ behavior: "smooth" });
