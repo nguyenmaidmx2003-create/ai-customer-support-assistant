@@ -1,0 +1,30 @@
+{
+  "name": "ai-customer-support-assistant",
+  "version": "1.0.0",
+  "description": "AI-assisted workflow for customer requests, developer execution and QC verification",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenmaidmx2003-create/ai-customer-support-assistant.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nguyenmaidmx2003-create/ai-customer-support-assistant/issues"
+  },
+  "homepage": "https://github.com/nguyenmaidmx2003-create/ai-customer-support-assistant#readme",
+  "dependencies": {
+    "@google/genai": "^2.30.0",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0"
+  }
+}

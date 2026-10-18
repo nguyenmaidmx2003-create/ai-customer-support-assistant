@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Assistant | Data Updates</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f6f8;
+      color: #202938;
+      line-height: 1.5;
+    }
+
+    header {
+      background: #172b4d;
+      color: white;
+      padding: 24px;
+    }
+
+    header h1 { margin: 0 0 6px; font-size: 24px; }
+    header p { margin: 0; color: #d5deeb; }
+
+    main {
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 0 18px 40px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e1e5eb;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    h2 { margin-top: 0; font-size: 19px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; }
+
+    textarea {
+      width: 100%;
+      min-height: 145px;
+      padding: 12px;
+      border: 1px solid #b8c2cf;
+      border-radius: 8px;
+      font: inherit;
+      resize: vertical;
+    }
+
+    button {
+      background: #175cd3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 17px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    button:hover { background: #1249a8; }
+
+    .secondary {
+      background: #e9eef5;
+      color: #172b4d;
+      margin-left: 8px;
+    }
+
+    .secondary:hover { background: #dce4ef; }
+
+    .notice {
+      background: #fff7e6;
+      border: 1px solid #f0d28a;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .result {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: inherit;
+      margin: 0;
+    }
+
+    .muted { color: #667085; font-size: 14px; }
+
+    .hidden { display: none; }
+
+    footer {
+      text-align: center;
+      padding: 12px;
+      color: #667085;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Developer Assistant</h1>
+    <p>Prepare data-update plans and QC verification checklists.</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. Customer request</h2>
+      <label for="request">Paste a synthetic or authorized request</label>
+      <textarea id="request" placeholder="Example: Please update the status of item ITEM-1001 to Active."></textarea>
+
+      <button id="generate">Generate work package</button>
+      <button id="sample" class="secondary">Load sample</button>
+      <button id="export" class="secondary" disabled>Export work package</button>
+      <p id="exportStatus" class="muted">Generate a work package before exporting.</p>
+
+      <p class="muted">
+        AI-powered prototype using Gemini. It does not access Gmail, Jira,
+        or your company's systems. All outputs are drafts requiring human review.
+        </p>
+    </section>
+
+    <section id="results" class="hidden">
+      <div class="notice">
+        <strong>Human review required.</strong>
+        The generated content is a draft. No data has been changed.
+      </div>
+      <div id="blockedNotice" class="notice hidden" style="margin-top: 12px;">
+        <strong>Work package blocked pending clarification.</strong>
+        Do not execute any change until the identifier is clarified and required authorization is confirmed.
+      </div>
+
+      <section class="card">
+        <h2>2. Request summary</h2>
+        <pre id="summary" class="result"></pre>
+      </section>
+
+
+<section class="card">
+  <h2>3. Extracted information</h2>
+  <pre id="extracted" class="result"></pre>
+
+  <h3>Requested changes</h3>
+  <div style="overflow-x: auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr>
+          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Item ID</th>
+          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Identifier status</th>
+          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Field</th>
+          <th style="padding:10px; border-bottom:1px solid #e1e5eb;">Requested value</th>
+        </tr>
+      </thead>
+      <tbody id="changeRows">
+        <tr>
+          <td colspan="4" style="padding:10px;">No changes extracted yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+      <section class="card">
+        <h2>4. Missing information and limitations</h2>
+        <pre id="missing" class="result"></pre>
+      </section>
+
+      <section class="card">
+        <h2>5. Developer work plan</h2>
+        <pre id="plan" class="result"></pre>
+      </section>
+
+      <section class="card">
+        <h2>6. QC verification checklist</h2>
+        <pre id="checklist" class="result"></pre>
+      </section>
+    </section>
+  </main>
+
+  <footer>AI Customer Support Workflow Assistant · MVP v0.1</footer>
+
+  <script>
+    const requestInput = document.getElementById("request");
+    const results = document.getElementById("results");
+    const exportButton = document.getElementById("export");
+    const exportStatus = document.getElementById("exportStatus");
+    let currentCustomerRequest = "";
+
+    function showChangeMessage(message) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 4;
+      cell.style.padding = "10px";
+      cell.textContent = message;
+      row.appendChild(cell);
+      document.getElementById("changeRows").replaceChildren(row);
+    }
+
+    function markdownCell(value) {
+      return value.replace(/\|/g, "\\|").replace(/\r?\n/g, "<br>");
+    }
+
+    exportButton.addEventListener("click", () => {
+      if (exportButton.disabled || !currentCustomerRequest) {
+        return;
+      }
+
+      const changeRows = Array.from(
+        document.querySelectorAll("#changeRows tr")
+      ).map((row) =>
+        Array.from(row.cells, (cell) => markdownCell(cell.textContent))
+      );
+      const changesMarkdown = [
+        "| Item ID | Identifier status | Field | Requested value |",
+        "| --- | --- | --- | --- |",
+        ...changeRows.map((row) => `| ${row.join(" | ")} |`)
+      ].join("\n");
+      const sections = [
+        "# Customer Support Work Package",
+        "> Draft for human review. No data update is claimed or executed by this export.",
+        "## Customer request",
+        currentCustomerRequest,
+        "## Summary",
+        document.getElementById("summary").textContent,
+        "## Extracted information",
+        document.getElementById("extracted").textContent,
+        "## Requested changes",
+        changesMarkdown,
+        "## Missing information and limitations",
+        document.getElementById("missing").textContent,
+        "## Developer work plan",
+        document.getElementById("plan").textContent,
+        "## QC checklist",
+        document.getElementById("checklist").textContent
+      ];
+      const file = new Blob([sections.join("\n\n")], {
+        type: "text/markdown;charset=utf-8"
+      });
+      const url = URL.createObjectURL(file);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = `work-package-${new Date()
+        .toISOString()
+        .slice(0, 10)}.md`;
+      downloadLink.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    });
+
+    document.getElementById("sample").addEventListener("click", () => {
+      requestInput.value =
+        "Subject: Request to Update Item Status\n\n" +
+        "From: Sarah Johnson <sarah.johnson@example.com>\n\n" +
+        "Hi Support Team,\n\n" +
+        "Could you please help us update the status of the following items?\n\n" +
+        "Item ID | Requested Status\n" +
+        "ITEM-1001 | Active\n" +
+        "002 | Active\n" +
+        "ITEM-1003 | Inactive\n\n" +
+        "Please review the request and let us know if you need any additional information before proceeding.\n\n" +
+        "Thank you for your help.\n\n" +
+        "Best regards,\n" +
+        "Sarah Johnson";
+      requestInput.focus();
+    });
+
+
+document.getElementById("generate").addEventListener("click", async () => {
+  const request = requestInput.value.trim();
+  const generateButton = document.getElementById("generate");
+
+  if (!request) {
+    alert("Please enter a customer request first.");
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = "Generating with AI...";
+  exportButton.disabled = true;
+  currentCustomerRequest = "";
+  exportStatus.textContent = "Generate a work package before exporting.";
+
+  results.classList.remove("hidden");
+  document.getElementById("summary").textContent = request;
+  document.getElementById("extracted").textContent =
+    "Gemini is analyzing the request...";
+  document.getElementById("missing").textContent = "Please wait...";
+  document.getElementById("plan").textContent = "Generating AI work package...";
+  document.getElementById("checklist").textContent = "Please wait...";
+  document.getElementById("blockedNotice").classList.add("hidden");
+  showChangeMessage("Gemini is extracting requested changes...");
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        customerRequest: request
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "The AI request failed.");
+    }
+
+    currentCustomerRequest = request;
+    exportButton.disabled = false;
+    exportStatus.textContent = "Export the currently displayed work package as Markdown.";
+
+    // Gemini returns a generated work package as text.
+
+document.getElementById("summary").textContent = data.summary;
+document.getElementById("extracted").textContent = data.extracted;
+document.getElementById("missing").textContent = data.missing;
+document.getElementById("plan").textContent = data.plan;
+document.getElementById("checklist").textContent = data.checklist;
+const changeRows = document.getElementById("changeRows");
+const changes = Array.isArray(data.changes) ? data.changes : [];
+const validChanges = changes.filter(
+  (change) =>
+    change &&
+    typeof change === "object" &&
+    !Array.isArray(change) &&
+    typeof change.itemId === "string" &&
+    ["clear", "ambiguous", "missing"].includes(change.identifierStatus) &&
+    typeof change.identifierNote === "string" &&
+    (change.identifierStatus === "missing"
+      ? change.itemId === ""
+      : Boolean(change.itemId)) &&
+    (change.identifierStatus === "clear" || Boolean(change.identifierNote.trim())) &&
+    ["field", "requestedValue"].every(
+      (key) => typeof change[key] === "string" && change[key].trim()
+    )
+);
+const identifierNeedsClarification = validChanges.some(
+  (change) => change.identifierStatus !== "clear"
+);
+const workPackageBlocked = data.blocked === true || identifierNeedsClarification;
+document.getElementById("blockedNotice").classList.toggle("hidden", !workPackageBlocked);
+
+changeRows.replaceChildren();
+
+if (validChanges.length > 0) {
+  validChanges.forEach(change => {
+    const row = document.createElement("tr");
+
+    [
+      change.itemId || "Not provided",
+      change.identifierStatus === "clear"
+        ? "Clear"
+        : `${change.identifierStatus}: ${change.identifierNote}`,
+      change.field,
+      change.requestedValue
+    ].forEach(value => {
+      const cell = document.createElement("td");
+      cell.style.padding = "10px";
+      cell.style.borderBottom = "1px solid #e1e5eb";
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+
+    changeRows.appendChild(row);
+  });
+}
+
+if (validChanges.length === 0) {
+  const message = Array.isArray(data.changes)
+    ? "No valid changes could be extracted. Review the extracted information and request."
+    : "The AI response did not include a valid changes list. Review the extracted information and request.";
+  showChangeMessage(message);
+} else if (validChanges.length < changes.length) {
+  const row = document.createElement("tr");
+  const cell = document.createElement("td");
+  cell.colSpan = 4;
+  cell.style.padding = "10px";
+  cell.textContent =
+    "Some returned changes were invalid and were not displayed. Review the extracted information and request.";
+  row.appendChild(cell);
+  changeRows.appendChild(row);
+}
+
+
+  } catch (error) {
+    showChangeMessage("No requested changes are available because the AI request failed.");
+    document.getElementById("extracted").textContent = "AI request unsuccessful.";
+    document.getElementById("missing").textContent = error.message;
+    document.getElementById("plan").textContent =
+      "No work package was generated. Check the backend terminal and try again.";
+    document.getElementById("checklist").textContent =
+      "Do not execute any change based on an unsuccessful AI request.";
+
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = "Generate work package";
+  }
+
+  results.scrollIntoView({ behavior: "smooth" });
+});
+  </script>
+</body>
+</html>
