@@ -2,6 +2,12 @@
 
 An AI-assisted MVP for turning customer data-update requests into draft work packages for developer review and QC verification. The app helps organize a request; it does not perform system updates or contact customers.
 
+## Live Prototype
+
+[Open the live prototype](https://ai-customer-support-assistant-iwbm.onrender.com/)
+
+This is a portfolio prototype. Use fictional data only. Generated work packages are drafts for human review and do not execute changes in company systems.
+
 ## Business problem and intended users
 
 Customer requests can be passed between team leads, developers, and QC, making it important to keep requested values, open questions, execution planning, and verification steps clear and traceable.
